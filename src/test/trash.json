@@ -1,0 +1,22 @@
+{
+    "child-sort":{
+        "first":"Newest first",
+        "second":"Oldest first",
+        "third":"A-Z",
+        "fourth":"Z-A",
+        "fifth":"Older age first",
+        "sixth":"Younger age first"
+    },
+    "child-filter":{
+        "first":"Group",
+        "second":"birthday by month",
+        "third":"Search by child all information"
+    },
+    "history-filter":{
+        "first":"Start date",
+        "second":"End date",
+        "third":"Type (Enter,Exit,Not enter)",
+        "fourth":"Sms status",
+        "sixth":"by child"
+    }
+}
