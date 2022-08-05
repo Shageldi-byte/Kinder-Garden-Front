@@ -117,16 +117,11 @@ function App() {
   const changeMode =()=> {
     setIsDark(!isDark);
   };
-  console.log=()=>{};
+  // console.log=()=>{};
   console.error=()=>{};
   console.warning=()=>{};
   console.warn=()=>{};
   console.info=()=>{};
-
- 
-
-  
-
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <BrowserRouter>

@@ -1,13 +1,13 @@
-import React from 'react'
-import { styled } from '@mui/material/styles';
+import React, {useEffect, useState} from 'react'
+import {styled} from '@mui/material/styles';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
-import TableCell, { tableCellClasses } from '@mui/material/TableCell';
+import TableCell, {tableCellClasses} from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
-import { Stack, Typography } from '@mui/material';
+import {Stack, Typography} from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -17,6 +17,10 @@ import InputLabel from '@mui/material/InputLabel';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import '../../style/Report/report.css'
+import {AxiosInstance} from "../../api/Axios/AxiosInstance";
+import {showError, showWarning} from "../../alert/Alert.mjs";
+import {GENDER, LOGTYPE, SERVER_ADDRESS} from "../../common/constant.mjs";
+import {NavLink} from "react-router-dom";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -70,20 +74,36 @@ const Report = () => {
     setType(event.target.value);
   };
 
-  const list = [
-    {
-      sms:1,
-      state:1
-    },
-    {
-      sms:0,
-      state:1
-    },
-    {
-      sms:1,
-      state:2
-    }
-  ]
+  const [list,setList] = useState([]);
+
+  const getData=async()=>{
+    const body = {
+        type:type
+    };
+    await AxiosInstance.post('/admin/get-report',body)
+        .then(response => {
+            if(!response.data.error){
+              setList(response.data.body);
+            } else {
+              showWarning('Error');
+            }
+        })
+        .catch(err=>{
+          showError(err+"");
+        })
+  };
+
+  useEffect(()=>{
+      getData();
+  },[]);
+
+  useEffect(()=>{
+    getData();
+  },[type]);
+
+  const gotoView=(child_id)=>{
+
+  }
 
   return (
     <div>
@@ -129,11 +149,11 @@ const Report = () => {
                 <MenuItem value="">
                   <em>Hiçisi</em>
                 </MenuItem>
-                <MenuItem value={10}>Gija galan</MenuItem>
-                <MenuItem value={20}>Gelmedik</MenuItem>
-                <MenuItem value={30}>Sms gitmedik</MenuItem>
-                <MenuItem value={30}>Giriş</MenuItem>
-                <MenuItem value={30}>Çykyş</MenuItem>
+                <MenuItem value={1}>Gija galan</MenuItem>
+                <MenuItem value={2}>Gelmedik</MenuItem>
+                <MenuItem value={3}>Sms gitmedik</MenuItem>
+                <MenuItem value={4}>Giriş</MenuItem>
+                <MenuItem value={5}>Çykyş</MenuItem>
               </Select>
             </FormControl>
           </Stack>
@@ -161,17 +181,17 @@ const Report = () => {
             return(
               <StyledTableRow key={i} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
               <StyledTableCell component="th" scope="row">
-                1
+                {item.id}
               </StyledTableCell>
-              <StyledTableCell align="right">Merjen Permanowa</StyledTableCell>
-              <StyledTableCell align="right">Alemgoshar</StyledTableCell>
-              <StyledTableCell align="right"><img src="/images/child.webp" alt="img" className="child-image"/></StyledTableCell>
-              <StyledTableCell align="right">09:00</StyledTableCell>
-              <StyledTableCell align="right">Maral Soltanowa</StyledTableCell>
-              <StyledTableCell align="right">+99362737222</StyledTableCell>
-              <StyledTableCell align="right">Koshi taslama</StyledTableCell>
-              <StyledTableCell align="right">Geldi</StyledTableCell>
-              <StyledTableCell align="right">Gitdi</StyledTableCell>
+              <StyledTableCell align="right">{`${item.name} ${item.surname}`}</StyledTableCell>
+              <StyledTableCell align="right">{item.group_name}</StyledTableCell>
+              <StyledTableCell align="right"><img src={`${SERVER_ADDRESS}/public/image/children/${item.child_image}`} alt="img" className="child-image"/></StyledTableCell>
+              <StyledTableCell align="right">{item.time_log}</StyledTableCell>
+              <StyledTableCell align="right">{item.phone_number_gender==GENDER.MAN?item.father_fullname:item.mother_fullname}</StyledTableCell>
+              <StyledTableCell align="right">{item.phone_number_gender==GENDER.MAN?item.father_phone_number:item.mother_phone_number}</StyledTableCell>
+              <StyledTableCell align="right">{item.address}</StyledTableCell>
+              <StyledTableCell align="right">{item.type==LOGTYPE.ENTER?"Giriş":"Çykyş"}</StyledTableCell>
+              <StyledTableCell align="right">{item.is_delivery_sms?"Sms gitdi":"Sms gitmedi"}</StyledTableCell>
               <StyledTableCell align="right">
                 <IconButton
                   aria-label="more"
@@ -199,7 +219,7 @@ const Report = () => {
                   }}
                 >
                   <MenuItem key={'info'} onClick={handleClose}>
-                    Çaganyň maglumaty
+                    <NavLink to={`/childview/${item.child_id}`} style={{textDecoration:'none'}}><Typography color={'secondary'}>Çaganyň maglumaty</Typography></NavLink>
                   </MenuItem>
                 </Menu>
               </StyledTableCell>

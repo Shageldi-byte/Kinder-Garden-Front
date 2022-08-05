@@ -2,6 +2,16 @@
     padding:0;
     margin:0;
 }
+@font-face {
+    font-family: myFont;
+    src: url('../../font/font.ttf');
+}
+
+.myFont{
+    font-family: "myFont";
+}
+
+
 body{
     max-width: 100%;
     width: 100%;
@@ -15,27 +25,27 @@ body{
 
 #right-cyrcle{
     background-color:#68C0E4;
-    border-radius:50px;
-    width:100px;
-    height:100px;
+    border-radius:50%;
+    width:120px;
+    height:120px;
     text-align:center;
     margin-right: -30px;
-    margin-top:-30px;
+    margin-top:-20px;
 }
 
 #inside-cyrcle{
     background-color:#7467D0;
-    border-radius:30px;
-    width:60px;
-    height:60px;
+    border-radius:50%;
+    width:80px;
+    height:80px;
     margin-top:20px;
 }
 
 #top-cyrcle{
     background-color:#FFE244;
     border-radius:70px;
-    width:120px;
-    height:120px;
+    width:140px;
+    height:140px;
     margin-left:-60px;
     margin-top:-60px;
 }
@@ -49,7 +59,7 @@ body{
     width:25%;
     height:300px;
     object-fit:cover;
-    border-radius:150px;
+    border-radius:50%;
     margin-top: -40px;
 }
 
@@ -89,8 +99,8 @@ body{
 }
 
 .footer #childs{
-    width:200px;
-    height:150px;
+    width:280px;
+    height:230px;
     position: fixed;
     left:0;
     bottom:0;
@@ -121,4 +131,65 @@ body{
     padding: 8px;
     border-radius:16px;
     margin-top: 4px;
+}
+
+.centerItem{
+    margin-left: 40%;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+
+}
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+    .plain{
+        width:37%;
+        height:200px;
+    }
+
+    .right-plain{
+        width:100%;
+        height:200px;
+    }
+    #child-image{
+        width:25%;
+        height:300px;
+    }
+
+    .centerItem{
+        margin-left: 40%;
+    }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 2000px) {
+    .plain{
+        width:37%;
+        height:300px;
+    }
+
+    .right-plain{
+        width:100%;
+        height:300px;
+    }
+    #child-image{
+        width:25%;
+        height:45vh;
+    }
+
+    .centerItem{
+        margin-left: 44%;
+    }
 }

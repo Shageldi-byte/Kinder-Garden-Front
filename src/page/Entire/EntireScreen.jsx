@@ -6,6 +6,29 @@ import { IMAGE_ADDRESS, QR_CODE_LENGHT, SERVER_ADDRESS } from '../../common/cons
 import { AxiosInstance } from '../../api/Axios/AxiosInstance';
 import { ToastContainer } from 'react-toastify';
 import { showError, showSuccess, showWarning } from '../../alert/Alert.mjs';
+import '../../font/font.ttf';
+
+const useAudio = url => {
+  const [audio] = useState(new Audio(url));
+  const [playing, setPlaying] = useState(false);
+
+  const toggle = () => setPlaying(!playing);
+
+  useEffect(() => {
+        playing ? audio.play() : audio.pause();
+      },
+      [playing]
+  );
+
+  useEffect(() => {
+    audio.addEventListener('ended', () => setPlaying(false));
+    return () => {
+      audio.removeEventListener('ended', () => setPlaying(false));
+    };
+  }, []);
+
+  return [playing, toggle];
+};
 
 
 const EntireScreen = () => {
@@ -18,9 +41,9 @@ const EntireScreen = () => {
     if(typeof log === 'undefined' || log == null) {
       return "Giriş hasaba alyndy";
     } else if (log.log_type == 1) {
-      return "Çykyş hasaba alyndy";
+      return "Çykys hasaba alyndy";
     } else {
-      return "Giriş hasaba alyndy";
+      return "Giris hasaba alyndy";
     }
   }
   const getRelative = (child) => {
@@ -30,6 +53,8 @@ const EntireScreen = () => {
       return child.mother_fullname;
     }
   }
+
+  const [playing, toggle] = useAudio('../../audio/success.wav');
 
   const getTypeValue = (log) => {
     if(typeof log === 'undefined' || log == null) {
@@ -77,6 +102,7 @@ const EntireScreen = () => {
     .then(response => {
       if (!response.data.error) {
         showSuccess('Hasaba alyndy!');
+        toggle();
         setNewLog(response.data.body);
       } else {
         showWarning('Ýalňyşlyk ýüze çykdy');
@@ -88,12 +114,13 @@ const EntireScreen = () => {
   }
   return (
     <div className={'main-section'} onClick={() => inputRef.current.focus()}>
+
       <ToastContainer />
       <div className='top-section'>
         <Stack direction={'row'} justifyContent={'space-between'}>
           <Stack direction={'row'}>
             <div id="top-cyrcle"></div>
-            <Typography variant={'h5'} color={'white'} sx={{ fontWeight: 'bold', ml: 2 }}>70 Çagalar<br />bagy</Typography>
+            <Typography variant={'h5'} color={'white'} sx={{ fontWeight: 'bold', ml: 2, fontFamily:'myFont',mt:2 }} className={'myFont'}>70 Çagalar<br />bagy</Typography>
           </Stack>
           <Stack direction={'row'}>
             <img src="/images/cloud.png" alt="cloud" className="cloud" />
@@ -104,7 +131,7 @@ const EntireScreen = () => {
           </Stack>
         </Stack>
       </div>
-
+      {/* <button onClick={toggle}>{playing ? "Pause" : "Play"}</button> */}
       <center>
         <Stack direction={'row'}>
           <img src="/images/plane.png" alt="left-plain" className="plain" />
@@ -118,44 +145,44 @@ const EntireScreen = () => {
 
       <div id="center-section">
         <center>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '18px' }}>
-            {child == null ? "ID kardyňyzy ýakynlaşdyryň" : getType(last_log)}
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '18px', fontFamily:'myFont' }}>
+            {child == null ? "ID kardynyzy ýakynlasdyryn" : getType(last_log)}
           </Typography>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '30px' }}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '30px', fontFamily:'myFont' }}>
             {new_log == null ? "00:00" : new_log.time_log}
           </Typography>
           <input ref={inputRef} autoFocus type="text" value={idValue} onChange={e => setIdValue(e.target.value)} />
 
         </center>
 
-        <Stack alignItems={'start'} sx={{ marginLeft: '40%', mt: 2 }}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px' }}>
+        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
             Ady/Familyasy:
           </Typography>
           <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2 }}>
+            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
               {child == null ? "..." : `${child.name} ${child.surname}`}
             </Typography>
           </div>
         </Stack>
 
-        <Stack alignItems={'start'} sx={{ marginLeft: '40%', mt: 2 }}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px' }}>
+        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
             Topary:
           </Typography>
           <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2 }}>
+            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
               {child == null ? "..." : `${child.group_name}`}
             </Typography>
           </div>
         </Stack>
 
-        <Stack alignItems={'start'} sx={{ marginLeft: '40%', mt: 2 }}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px' }}>
+        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
             Hossary:
           </Typography>
           <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2 }}>
+            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
               {child == null ? "..." : getRelative(child)}
             </Typography>
           </div>
@@ -177,7 +204,7 @@ const EntireScreen = () => {
       <div className="footer">
         <img src="/images/childs.png" alt="childs" id="childs" />
         <center>
-          <Typography color="white">
+          <Typography color="white" sx={{fontFamily:'myFont'}}>
             Sanly Geljek 2022
           </Typography>
         </center>
