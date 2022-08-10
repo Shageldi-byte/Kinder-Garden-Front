@@ -3,6 +3,7 @@ import FamilyRestroomIcon from '@mui/icons-material/FamilyRestroom';
 import GroupsIcon from '@mui/icons-material/Groups';
 import HistoryToggleOffIcon from '@mui/icons-material/HistoryToggleOff';
 import React from 'react'
+import {Settings} from "@mui/icons-material";
 export const sideBarChilds = [
     {
         title:'Hasabat',
@@ -23,6 +24,11 @@ export const sideBarChilds = [
         title:'Taryh',
         icon: <HistoryToggleOffIcon/>,
         link:'/history'
+    },
+    {
+        title:'Sazlamalar',
+        icon: <Settings/>,
+        link:'/settings'
     }
 ];
 const Sidebar = () => {

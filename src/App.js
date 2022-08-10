@@ -14,6 +14,7 @@ import { useState } from "react";
 import SignIn from './page/SignIn/SignIn';
 import ChildView from './page/ChildView/ChildView';
 import EntireScreen from './page/Entire/EntireScreen';
+import SettingsApp from "./page/Settings/Settings";
 
 
 const darkTheme = createTheme({
@@ -133,6 +134,7 @@ function App() {
             <Route path="children" element={<Children />} />
             <Route path="group" element={<Group/>} />
             <Route path="history" element={<History/>} />
+            <Route path="settings" element={<SettingsApp/>} />
             <Route path="childview/:id" element={<ChildView/>}/>
           </Route>
         </Routes>

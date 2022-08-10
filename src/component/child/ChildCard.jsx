@@ -32,6 +32,7 @@ import {NavLink} from 'react-router-dom';
 import {GENDER, SERVER_ADDRESS} from "../../common/constant.mjs";
 import {AxiosInstance,AxiosInstanceFormData} from "../../api/Axios/AxiosInstance";
 import {showError, showSuccess, showWarning} from "../../alert/Alert.mjs";
+import QrCodeApp from "./QrCode";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
     return <Slide direction="up" ref={ref} {...props} />;
@@ -63,7 +64,7 @@ const ChildCard = (props) => {
     const [surname, setSurname] = useState(child.surname);
     const [middle_name, setMiddleName] = useState(child.middle_name);
     const [age, setAge] = useState(child.age);
-    const [child_group, setChildGroup] = useState(child.group_id);
+    const [child_group, setChildGroup] = useState(child.group_id==null || child.group_id=='' || child.group_id==0?0:child.group_id);
     const [faa, setFaa] = useState(child.father_fullname);
     const [father_phone_number, setFatherPhoneNumber] = useState(child.father_phone_number);
     const [maa, setMaa] = useState(child.mother_fullname);
@@ -87,6 +88,30 @@ const ChildCard = (props) => {
 
     const handleClickOpen = () => {
         setOpen(true);
+        setName(child.name);
+        setSurname(child.surname);
+        setMiddleName(child.middle_name);
+        setAge(child.age);
+        setChildGroup(child.group_id);
+        setFaa(child.father_fullname);
+        setFatherPhoneNumber(child.father_phone_number);
+        setMaa(child.mother_fullname);
+        setMotherPhoneNumber(child.mother_phone_number);
+        setSmsGender(child.phone_number_gender);
+        setCareGiver(child.child_caregiver);
+        caregiver_phone_number(child.caregiver_phone_number);
+        setAddress(child.address);
+        setEnterDate(child.kinder_garden_entered_date);
+        setExitDate(child.kinder_garden_exited_date);
+        setBirthday(child.dob);
+        setGender(child.gender);
+        setFullinformation(child.full_information);
+        setFatherJob(child.father_job_address);
+        setMotherJob(child.mother_job_address);
+        setImage('');
+        setBirthCertificate('');
+        setHealthDoc('');
+        setQrCode(child.qr_code);
     };
 
     const handleClose = () => {
@@ -127,29 +152,10 @@ const ChildCard = (props) => {
     }
 
     const clearInput = () => {
-        setName('');
-        setSurname('');
-        setMiddleName('');
-        setAge('');
-        setChildGroup('');
-        setFaa('');
-        setFatherPhoneNumber('+993');
-        setMaa('');
-        setMotherPhoneNumber('+993');
-        setSmsGender('');
-        setCareGiver('');
-        setCaregiverPhoneNumber('+993');
-        setAddress('');
-        setEnterDate('');
-        setExitDate('');
-        setBirthday('');
-        setGender('');
-        setFullinformation('');
-        setFatherJob('');
-        setMotherJob('');
         setImage('');
         setBirthCertificate('');
         setDocs('');
+        setHealthDoc('');
         setQrCode(makeid(20));
     }
 
@@ -178,6 +184,7 @@ const ChildCard = (props) => {
             formData.append('dob', birthday);
             formData.append('address', address);
             formData.append('qr_code', qr_code);
+            formData.append('health_doc', healthDoc);
             formData.append('id', child.id);
 
             if(image!='' && image!=null) {
@@ -285,7 +292,7 @@ const ChildCard = (props) => {
                             Çaga üýtgetmek
                         </Typography>
 
-                        <Button color={'inherit'} sx={{ mr: 1 }} onClick={generateQrCode} startIcon={<DownloadIcon />}>QR code</Button>
+                        <QrCodeApp value={qr_code}/>
 
                         <Button autoFocus color={'warning'} variant={'outlined'} onClick={addChildFun}>
                             Üýtget
@@ -407,8 +414,8 @@ const ChildCard = (props) => {
                     </Grid>
 
                     <Grid item lg={3}>
-                        <label htmlFor="contained-button-file3">
-                            <Input id="contained-button-file3" type="file" onChange={handleHealthInput} />
+                        <label htmlFor="contained-button-file4">
+                            <Input id="contained-button-file4" type="file" onChange={handleHealthInput} />
                             <FileBrowse component="span" image={healthDoc == '' ? 'Saglyk ýagdaýy barada kepilnama' : healthDoc.name}>
                             </FileBrowse>
                         </label>

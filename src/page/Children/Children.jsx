@@ -25,6 +25,8 @@ import DownloadIcon from '@mui/icons-material/Download';
 import { AxiosInstance, AxiosInstanceFormData } from "../../api/Axios/AxiosInstance";
 import { showError, showSuccess, showWarning } from "../../alert/Alert.mjs";
 import { ToastContainer } from "react-toastify";
+import QrCodeApp from "../../component/child/QrCode";
+import { useSearchParams } from "react-router-dom";
 
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -53,9 +55,14 @@ const Children = () => {
     const openFilter = Boolean(filterAnchor);
     const [open, setOpen] = React.useState(false);
     const [groups, setGroups] = useState([]);
+    const [searchParams, setSearchParams] = useSearchParams();
 
-    const [group, setGroup] = useState(0);
+    let group_id_param=searchParams.get("group_id");
+
+    const [group, setGroup] = useState(group_id_param);
     const [month, setMonth] = useState(0);
+
+
 
     // Add child
     const [name, setName] = useState('');
@@ -83,6 +90,9 @@ const Children = () => {
     const [docs, setDocs] = useState('');
     const [healthDoc, setHealthDoc] = useState('');
     const [qr_code, setQrCode] = useState(makeid(20));
+
+
+
 
 
     const handleClickOpen = () => {
@@ -254,6 +264,7 @@ const Children = () => {
         setMotherJob('');
         setImage('');
         setBirthCertificate('');
+        setHealthDoc('');
         setDocs('');
     }
 
@@ -285,6 +296,7 @@ const Children = () => {
             formData.append('certificate', borthCertificate);
             formData.append('address', address);
             formData.append('qr_code', qr_code);
+            formData.append('health_doc', healthDoc);
             AxiosInstanceFormData.post('/admin/add-child', formData)
                 .then(response => {
                     if (!response.data.error) {
@@ -443,7 +455,7 @@ const Children = () => {
                             Çaga goşmak
                         </Typography>
 
-                        <Button color={'inherit'} sx={{ mr: 1 }} onClick={generateQrCode} startIcon={<DownloadIcon />}>QR code</Button>
+                        <QrCodeApp value={qr_code}/>
 
                         <Button autoFocus color={'warning'} variant={'outlined'} onClick={addChildFun}>
                             Ýatda saklat
@@ -565,8 +577,8 @@ const Children = () => {
                     </Grid>
 
                     <Grid item lg={3}>
-                        <label htmlFor="contained-button-file3">
-                            <Input id="contained-button-file3" type="file" onChange={handleHealthInput} />
+                        <label htmlFor="contained-button-file4">
+                            <Input id="contained-button-file4" type="file" onChange={handleHealthInput} />
                             <FileBrowse component="span" image={healthDoc == '' ? 'Saglyk ýagdaýy barada kepilnama' : healthDoc.name}>
                             </FileBrowse>
                         </label>

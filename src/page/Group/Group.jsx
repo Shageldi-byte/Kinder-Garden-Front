@@ -10,13 +10,15 @@ import Paper from '@mui/material/Paper';
 import {Stack, Typography} from '@mui/material';
 import {AxiosInstance} from "../../api/Axios/AxiosInstance";
 import {showError, showSuccess, showWarning} from "../../alert/Alert.mjs";
-import {Add} from "@mui/icons-material";
+import {Add, ArrowCircleRight} from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Menu from "@mui/material/Menu";
 import TextField from "@mui/material/TextField";
 import Spacer from "react-spacer";
 import {ToastContainer} from "react-toastify";
+import {NavLink} from "react-router-dom";
+import IconButton from "@mui/material/IconButton";
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
     [`&.${tableCellClasses.head}`]: {
@@ -170,6 +172,7 @@ const Group = () => {
                             <StyledTableCell align="right">Topar belgisi</StyledTableCell>
                             <StyledTableCell align="right">Topar otagy</StyledTableCell>
                             <StyledTableCell align="right">Çaga sany</StyledTableCell>
+                            <StyledTableCell align="right">Çagalaryny gör</StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>
@@ -177,12 +180,17 @@ const Group = () => {
                             return (
                                 <StyledTableRow key={i} sx={{'&:last-child td, &:last-child th': {border: 0}}}>
                                     <StyledTableCell component="th" scope="row">
-                                        {item.id}
+                                            {item.id}
                                     </StyledTableCell>
                                     <StyledTableCell align="right">{item.group_name}</StyledTableCell>
                                     <StyledTableCell align="right">{item.group_number}</StyledTableCell>
                                     <StyledTableCell align="right">{item.group_room}</StyledTableCell>
                                     <StyledTableCell align="right">{item.child_count}</StyledTableCell>
+                                    <StyledTableCell align="right">
+                                        <NavLink to={`/children?group_id=${item.id}`} style={{textDecoration:'none'}}>
+                                            <IconButton><ArrowCircleRight/></IconButton>
+                                        </NavLink>
+                                    </StyledTableCell>
                                 </StyledTableRow>
                             )
                         })

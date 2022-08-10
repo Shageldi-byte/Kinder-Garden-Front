@@ -20,6 +20,7 @@ import { Paper, Stack } from '@mui/material';
 import Brightness4Icon from '@mui/icons-material/Brightness4';
 import Brightness7Icon from '@mui/icons-material/Brightness7';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { useLocation } from 'react-router-dom';
 
 const drawerWidth = 240;
 
@@ -28,6 +29,8 @@ function SideBar(props) {
   const [selected, setSelected] = React.useState(0);
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [toolbarTitle,setTitle] = React.useState(sideBarChilds[0].title);
+  let location = useLocation();
+  const [currentPage,setCurrentPage]=React.useState('');
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
@@ -37,6 +40,10 @@ function SideBar(props) {
     setSelected(index);
     setTitle(title);
   };
+
+    React.useEffect(() => {
+        setCurrentPage(location.pathname);
+    }, [location]);
 
   
 
@@ -53,7 +60,7 @@ function SideBar(props) {
         {sideBarChilds.map((sideBarChild, i) => (
           <Link to={sideBarChild.link} style={{ textDecoration: 'none', color: props.isDark ? '#FFFFFF' : '#000000' }} key={`${sideBarChild.title}___`}>
             <ListItem
-              selected={selected === i}
+              selected={currentPage==sideBarChild.link}
               onClick={() => handleSelect(i,sideBarChild.title)}
               key={sideBarChild.title}
               disablePadding>
@@ -71,6 +78,13 @@ function SideBar(props) {
   );
 
   const container = window !== undefined ? () => window().document.body : undefined;
+
+  const getTitle=()=>{
+      return sideBarChilds.filter((item)=>{
+          return item.link==currentPage;
+      });
+
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -94,7 +108,7 @@ function SideBar(props) {
               <MenuIcon />
             </IconButton>
             <Typography variant="h6" noWrap component="div">
-              {toolbarTitle}
+                {typeof getTitle()[0] === 'undefined' || getTitle()[0]== null || getTitle()[0] === ''?'Hasabat':getTitle()[0].title}
             </Typography>
 
             <Stack direction="row">

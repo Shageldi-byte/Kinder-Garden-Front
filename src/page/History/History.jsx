@@ -24,12 +24,14 @@ import {LocalizationProvider} from '@mui/x-date-pickers/LocalizationProvider';
 import Autocomplete from '@mui/material/Autocomplete';
 import ClearIcon from '@mui/icons-material/Clear';
 import {AxiosInstance} from "../../api/Axios/AxiosInstance";
-import {showError, showWarning} from "../../alert/Alert.mjs";
+import {showError, showSuccess, showWarning} from "../../alert/Alert.mjs";
 import {useState} from "react";
 import {Pagination} from "@mui/lab";
 import {GENDER, LOGTYPE, SERVER_ADDRESS} from "../../common/constant.mjs";
 import {NavLink} from "react-router-dom";
 import Spacer from "react-spacer";
+import {ToastContainer} from "react-toastify";
+import {Delete} from "@mui/icons-material";
 
 
 const StyledTableCell = styled(TableCell)(({theme}) => ({
@@ -206,6 +208,27 @@ const History = () => {
    }
   },[value]);
 
+  const removeLog=(id)=>{
+    AxiosInstance.delete(`/admin/delete-log/${id}`)
+        .then(response=>{
+          if(!response.data.error){
+            showSuccess('Pozuldy');
+            getData()
+          } else {
+            showWarning('Pozup bolmady!');
+          }
+        })
+        .catch(err=>{
+          showError(err + "");
+        })
+  }
+
+  const deleteLog=(item)=> {
+    if (window.confirm("Çyndanam pozmak isleýäňizmi?")) {
+       removeLog(item.id);
+    }
+  }
+
   return (
       <div>
         <Stack justifyContent='space-between' direction='row'>
@@ -359,7 +382,9 @@ const History = () => {
                 <StyledTableCell align="right">Öý salgy</StyledTableCell>
                 <StyledTableCell align="right">Bellik</StyledTableCell>
                 <StyledTableCell align="right">SMS</StyledTableCell>
-                <StyledTableCell align="right">More</StyledTableCell>
+                <StyledTableCell align="right">Pozmak</StyledTableCell>
+                <StyledTableCell align="right">Goşmaça</StyledTableCell>
+
               </TableRow>
             </TableHead>
             <TableBody>
@@ -385,6 +410,11 @@ const History = () => {
                       <StyledTableCell align="right">{item.type == LOGTYPE.ENTER ? "Giriş" : "Çykyş"}</StyledTableCell>
                       <StyledTableCell
                           align="right">{item.is_delivery_sms ? "Sms gitdi" : "Sms gitmedi"}</StyledTableCell>
+                      <StyledTableCell>
+                        <IconButton key={'delete_log'} onClick={()=>deleteLog(item)}>
+                          <Delete/>
+                        </IconButton>
+                      </StyledTableCell>
                       <StyledTableCell align="right">
                         <IconButton
                             aria-label="more"
@@ -415,8 +445,10 @@ const History = () => {
                             <NavLink to={`/childview/${item.child_id}`} style={{textDecoration: 'none'}}><Typography
                                 color={'secondary'}>Çaganyň maglumaty</Typography></NavLink>
                           </MenuItem>
+
                         </Menu>
                       </StyledTableCell>
+
                     </StyledTableRow>
                 )
               })
@@ -428,6 +460,7 @@ const History = () => {
         <Stack direction={'row'} justifyContent={'center'} alignItems={'center'}>
           <Pagination count={pageCount} fullWidth={true} variant="outlined" color="primary" page={page} onChange={handlePage}/>
         </Stack>
+        <ToastContainer/>
       </div>
   )
 }
