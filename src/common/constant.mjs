@@ -1,4 +1,4 @@
-export const SERVER_ADDRESS="http://localhost:5009";
+export const SERVER_ADDRESS=`http://${localStorage.getItem('localip')}:5009`;
 export const IMAGE_ADDRESS=`${SERVER_ADDRESS}/public/image/children/`;
 
 export const secret_key = "FG[uvt+kx.LT~c]:&R<$K[L7|`?&[s$,H),^&ObI-RW6:1$*Z];pkAWWgn:6$(";

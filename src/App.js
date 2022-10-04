@@ -119,10 +119,10 @@ function App() {
     setIsDark(!isDark);
   };
   // console.log=()=>{};
-  console.error=()=>{};
-  console.warning=()=>{};
-  console.warn=()=>{};
-  console.info=()=>{};
+  // console.error=()=>{};
+  // console.warning=()=>{};
+  // console.warn=()=>{};
+  // console.info=()=>{};
   return (
     <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
       <BrowserRouter>

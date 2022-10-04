@@ -226,19 +226,38 @@ const Children = () => {
     }, [month]);
 
     const handleFileInput = (e) => {
-        setImage(e.target.files[0]);
+        try{
+            setImage(e.target.files[0]);
+        } catch(err){
+            console.log(err);
+        }
     }
 
     const handleDocsInput = (e) => {
-        setDocs(e.target.files[0]);
+        try{
+            setDocs(e.target.files[0]);
+        } catch(err){
+            console.log(err);
+        }
+       
     }
 
     const handleCertificateInput = (e) => {
-        setBirthCertificate(e.target.files[0]);
+        try{
+            setBirthCertificate(e.target.files[0]);
+        } catch(err){
+            console.log(err);
+        }
+        
     }
 
     const handleHealthInput = (e) => {
-        setHealthDoc(e.target.files[0]);
+        try{
+            setHealthDoc(e.target.files[0]);
+        } catch(err){
+            console.log(err);
+        }
+        
     }
 
     const clearInput = () => {

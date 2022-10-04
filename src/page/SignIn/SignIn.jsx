@@ -17,7 +17,12 @@ import { showError, showWarning } from '../../alert/Alert.mjs';
 const theme = createTheme();
 
 export default function SignIn() {
+  const [ip,setIp]=React.useState(localStorage.getItem('localip'));
+  const saveIp=()=>{
+      localStorage.setItem('localip',ip);
+  }
   const handleSubmit = (event) => {
+    saveIp();
     event.preventDefault();
     const data = new FormData(event.currentTarget);
     let body={
@@ -44,6 +49,8 @@ export default function SignIn() {
       showError(error+'');
     })
   };
+
+ 
 
   return (
     <ThemeProvider theme={theme}>
@@ -83,6 +90,19 @@ export default function SignIn() {
               id="password"
               autoComplete="current-password"
             />
+
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="ip"
+              label="Ip salgysy"
+              type="text"
+              id="ip"
+              value={ip}
+              onChange={e=>setIp(e.target.value)}
+            />
+            
             <FormControlLabel
               control={<Checkbox value="remember" color="primary" />}
               label="Ýatda saklat"

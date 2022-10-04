@@ -7,28 +7,9 @@ import { AxiosInstance } from '../../api/Axios/AxiosInstance';
 import { ToastContainer } from 'react-toastify';
 import { showError, showSuccess, showWarning } from '../../alert/Alert.mjs';
 import '../../font/font.ttf';
-
-const useAudio = url => {
-  const [audio] = useState(new Audio(url));
-  const [playing, setPlaying] = useState(false);
-
-  const toggle = () => setPlaying(!playing);
-
-  useEffect(() => {
-        playing ? audio.play() : audio.pause();
-      },
-      [playing]
-  );
-
-  useEffect(() => {
-    audio.addEventListener('ended', () => setPlaying(false));
-    return () => {
-      audio.removeEventListener('ended', () => setPlaying(false));
-    };
-  }, []);
-
-  return [playing, toggle];
-};
+import useSound from 'use-sound';
+import successSound from '../../audio/success.wav';
+import errorSound from '../../audio/error.mp3';
 
 
 const EntireScreen = () => {
@@ -38,7 +19,7 @@ const EntireScreen = () => {
   const [idValue, setIdValue] = useState('');
   const inputRef = useRef();
   const getType = (log) => {
-    if(typeof log === 'undefined' || log == null) {
+    if (typeof log === 'undefined' || log == null) {
       return "Giriş hasaba alyndy";
     } else if (log.log_type == 1) {
       return "Çykys hasaba alyndy";
@@ -54,10 +35,11 @@ const EntireScreen = () => {
     }
   }
 
-  const [playing, toggle] = useAudio('../../audio/success.wav');
+  const [play, { stop }] = useSound(successSound);
+  const [playError, { stopError }] = useSound(errorSound);
 
   const getTypeValue = (log) => {
-    if(typeof log === 'undefined' || log == null) {
+    if (typeof log === 'undefined' || log == null) {
       return 1;
     } else if (log.log_type == 1) {
       return 0;
@@ -71,46 +53,54 @@ const EntireScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (idValue.length === QR_CODE_LENGHT) {
+    if (idValue.length >= QR_CODE_LENGHT) {
       AxiosInstance.post('/log/get-child-by-qr-code', {
         qrCode: idValue
       })
         .then(response => {
           if (!response.data.error) {
-            showSuccess('Hasaba alyndy!');
+            // showSuccess('Hasaba alyndy!');
             setChild(response.data.body.child);
             setLastLog(response.data.body.last_log);
             setIdValue('');
             sendNewLog(response.data);
           } else {
             showWarning('Ýalňyşlyk ýüze çykdy');
+            playError();
+            setIdValue('');
           }
         })
         .catch(err => {
           showError(err + '');
+          playError();
+          setIdValue('');
         })
     }
   }, [idValue]);
 
-  const sendNewLog=(data)=>{
-    let type=getTypeValue(data.body.last_log);
-    let newLog={
+  const sendNewLog = (data) => {
+    let type = getTypeValue(data.body.last_log);
+    let newLog = {
       type: type,
-      child_id:data.body.child.id
+      child_id: data.body.child.id
     };
-    AxiosInstance.post('/log/add-log',newLog)
-    .then(response => {
-      if (!response.data.error) {
-        showSuccess('Hasaba alyndy!');
-        toggle();
-        setNewLog(response.data.body);
-      } else {
-        showWarning('Ýalňyşlyk ýüze çykdy');
-      }
-    })
-    .catch(err => {
-      showError(err + '');
-    })
+    AxiosInstance.post('/log/add-log', newLog)
+      .then(response => {
+        if (!response.data.error) {
+          showSuccess('Hasaba alyndy!');
+          play();
+          setNewLog(response.data.body);
+        } else {
+          showWarning('Ýalňyşlyk ýüze çykdy');
+          playError();
+        }
+        setIdValue('');
+      })
+      .catch(err => {
+        showError(err + '');
+        playError();
+        setIdValue('');
+      })
   }
   return (
     <div className={'main-section'} onClick={() => inputRef.current.focus()}>
@@ -120,7 +110,7 @@ const EntireScreen = () => {
         <Stack direction={'row'} justifyContent={'space-between'}>
           <Stack direction={'row'}>
             <div id="top-cyrcle"></div>
-            <Typography variant={'h5'} color={'white'} sx={{ fontWeight: 'bold', ml: 2, fontFamily:'myFont',mt:2 }} className={'myFont'}>70 Çagalar<br />bagy</Typography>
+            <Typography variant={'h5'} color={'white'} sx={{ fontWeight: 'bold', ml: 2, fontFamily: 'myFont', mt: 2 }} className={'myFont'}>70 Çagalar<br />bagy</Typography>
           </Stack>
           <Stack direction={'row'}>
             <img src="/images/cloud.png" alt="cloud" className="cloud" />
@@ -133,60 +123,68 @@ const EntireScreen = () => {
       </div>
       {/* <button onClick={toggle}>{playing ? "Pause" : "Play"}</button> */}
       <center>
-        <Stack direction={'row'}>
+        <Stack direction={'row'} justifyContent={'space-between'} alignItems={'center'}>
           <img src="/images/plane.png" alt="left-plain" className="plain" />
-          <img src={child == null ? "/images/empty_image.png" : `${IMAGE_ADDRESS}${child.child_image}`} alt="child" id="child-image" />
+
           <Stack direction={'column'}>
+            <img src={child == null ? "/images/empty_image.png" : `${IMAGE_ADDRESS}${child.child_image}`} alt="child" id="child-image" />
             <img src="/images/paper-plain.png" alt="paper" className="paper" />
-            <img src="/images/plane.png" alt="right-plain" className="right-plain" />
           </Stack>
+          <img src="/images/plane.png" alt="right-plain" className="right-plain" />
         </Stack>
       </center>
 
+
+      <br />
+      <br />
+      <br />
+
       <div id="center-section">
         <center>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '18px', fontFamily:'myFont' }}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '18px', fontFamily: 'myFont' }}>
             {child == null ? "ID kardynyzy ýakynlasdyryn" : getType(last_log)}
           </Typography>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '30px', fontFamily:'myFont' }}>
+          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '30px', fontFamily: 'myFont' }}>
             {new_log == null ? "00:00" : new_log.time_log}
           </Typography>
           <input ref={inputRef} autoFocus type="text" value={idValue} onChange={e => setIdValue(e.target.value)} />
 
+
+          <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+            <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily: 'myFont' }}>
+              Ady/Familyasy:
+            </Typography>
+            <div className="textBack">
+              <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily: 'myFont' }}>
+                {child == null ? "..." : `${child.name} ${child.surname}`}
+              </Typography>
+            </div>
+          </Stack>
+
+          <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+            <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily: 'myFont' }}>
+              Topary:
+            </Typography>
+            <div className="textBack">
+              <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily: 'myFont' }}>
+                {child == null ? "..." : `${child.group_name}`}
+              </Typography>
+            </div>
+          </Stack>
+
+          <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
+            <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily: 'myFont' }}>
+              Hossary:
+            </Typography>
+            <div className="textBack">
+              <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily: 'myFont' }}>
+                {child == null ? "..." : getRelative(child)}
+              </Typography>
+            </div>
+          </Stack>
+
         </center>
 
-        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
-            Ady/Familyasy:
-          </Typography>
-          <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
-              {child == null ? "..." : `${child.name} ${child.surname}`}
-            </Typography>
-          </div>
-        </Stack>
-
-        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
-            Topary:
-          </Typography>
-          <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
-              {child == null ? "..." : `${child.group_name}`}
-            </Typography>
-          </div>
-        </Stack>
-
-        <Stack alignItems={'start'} sx={{ mt: 2 }} className={'centerItem'}>
-          <Typography color="#7467D0" sx={{ fontWeight: 'bold', fontSize: '12px', fontFamily:'myFont' }}>
-            Hossary:
-          </Typography>
-          <div className="textBack">
-            <Typography color="white" sx={{ fontWeight: 'bold', fontSize: '14px', ml: 2, fontFamily:'myFont' }}>
-              {child == null ? "..." : getRelative(child)}
-            </Typography>
-          </div>
-        </Stack>
 
 
 
@@ -204,7 +202,7 @@ const EntireScreen = () => {
       <div className="footer">
         <img src="/images/childs.png" alt="childs" id="childs" />
         <center>
-          <Typography color="white" sx={{fontFamily:'myFont'}}>
+          <Typography color="white" sx={{ fontFamily: 'myFont' }}>
             Sanly Geljek 2022
           </Typography>
         </center>
